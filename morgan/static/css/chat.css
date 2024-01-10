@@ -1,0 +1,12 @@
+.user-card-label, .assistant-card-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--body-quiet-color);
+    padding-top: 0;
+}
+
+.msg-card-body {
+    padding-top: 0;
+}
+
+.nav-

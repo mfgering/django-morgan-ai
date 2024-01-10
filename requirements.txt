@@ -1,0 +1,8 @@
+django>=4.2
+djangorestframework
+django-cors-headers
+django-markdownify
+requests
+python-dotenv
+django-bootstrap4
+django-debug-toolbar

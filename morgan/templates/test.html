@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load markdownify %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load static %}
+
+
+{% block title %}Test Title{% endblock %}
+{% block content %}
+****************{{ STATIC_URL }}
+<div class="container-fluid">
+    <button type="button" class="btn btn-primary">New Chat</button>
+</div>
+That's all folks!
+<div class="container-fluid">
+    <div class="card text-dark bg-light rounded-3 m-2">
+        <div class="card-body">
+            <h5 class="card-title">Morgan</h5>
+            <p class="card-text">This is not the right time.</p>
+        </div>
+    </div>
+    <div class="card m-2">
+        <div class="card-body">
+            <h5 class="card-title">You</h5>
+            <p class="card-text">When is a good time?</p>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary">Submit</button>
+</div>
+{% endblock content %}
+
+{% block footer %}
+<p>My footer</p>
+{% endblock footer %}

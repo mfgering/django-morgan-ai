@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% load markdownify %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load static %}
+
+
+{% block title %}Chat Review{% endblock %}
+{% block content %}
+<div class="container">
+    <h3>Chat Threads</h3>
+    <ul class="nav flex-column">
+        {% for chat in chat_list %}
+            {% if chat.id == chat_id_int %}
+                <li class="nav-item">
+                    <a class="nav-link active" href='/chat-show/{{ chat.id }}'>
+                        <span class="d-inline-block text-truncate" style="font-weight: bold; max-width: 20rem;">{{ chat.title }}
+                        </span></a> </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href='/chat-show/{{ chat.id }}'>
+                        <span class="d-inline-block text-truncate" style="max-width: 20rem;">{{ chat.title }}
+                        </span></a> </li>
+                        {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+
+{% if chat_id %}
+<div class="container">
+    <h3>Message Thread</h3>
+    <form action="/chat-show-action/" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="chat_id" value="{{chat_id}}"/>
+        {% for msg in msg_list %}
+            <input type="hidden" name="msg_str_{{msg.idx}}" value="{{msg.content|urlencode}}"/>
+            {% if msg.role == 'user' %}
+                <div class="card text-dark rounded-3 mb-2 usr-msg" style="margin-left: 2rem">
+                    <div class="card-body">
+                        <h5 class="card-title">You</h5>
+                        <div class="form-check">
+                            <input class="form-check-input" name="msg-chk-{{msg.idx}}" type="checkbox" value="1" id="msg-chk-{{msg.idx}}">
+                            <label class="form-check-label" for="msg-chk-{{msg.idx}}">
+                            Favorite
+                            </label>
+                        </div>                    
+                        <p class="card-text" id="chat-msg-{{msg.idx}}">{{ msg.content|markdownify }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card text-dark bg-light rounded-3 mb-2 ai-assist-msg" style="margin-right: 2rem">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ chat.character_name }}</h5>
+                        <p class="card-text" id="chat-msg-{{msg.idx}}">{{ msg.content|markdownify }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <div class="container-fluid mb-3">
+            <button type="submit" name="chat_action" value="favorites" class="btn btn-warning">Save Favorites</button>
+            <button type="submit" name="chat_action" value="delete_chat" class="btn btn-warning">Delete Chat</button>
+        </div>
+    </form>
+{% endif %}
+
+</div>
+{% endblock content %}
+
