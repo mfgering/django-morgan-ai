@@ -1,9 +1,9 @@
 import sys, os
 cwd = os.getcwd()
 sys.path.append(cwd)
-sys.path.append(cwd + '/morgan_ai')
+sys.path.append(cwd + '/morgan_proj')
 
-INTERP = os.path.expanduser("~/django.ferree-gering.com/.venv/bin/python")
+INTERP = os.path.expanduser("~/morgan-ai.ferree-gering.com/.venv/bin/python")
 
 if sys.executable != INTERP: os.execl(INTERP, INTERP, *sys.argv)
 
