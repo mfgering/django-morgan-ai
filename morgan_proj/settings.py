@@ -136,6 +136,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+ABS_CWD = os.path.abspath(os.getcwd())+"/static/"
+#STATIC_ROOT = "/home/ferreegering/morgan-ai.ferree-gering.com/static/"
+STATIC_ROOT = ABS_CWD
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
