@@ -161,7 +161,8 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 def show_toolbar(request):
-    return True
+    #return True
+    return False
 
 
 DEBUG_TOOLBAR_CONFIG = {
