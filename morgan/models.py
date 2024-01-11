@@ -52,7 +52,11 @@ class Run(models.Model):
 class Chat(Run):
     DEFAULT_CHARACTER_NAME = 'Morgan'
 
-    DEFAULT_GREETING = f"Hi. I'm **{DEFAULT_CHARACTER_NAME}**, your AI assistant for The Dawson. I can help you with things related to The Dawson on Morgan, like answering questions and providing information about the property and its operation. How can I help you?"
+    DEFAULT_GREETING = f"Hi. I'm **{DEFAULT_CHARACTER_NAME}**, your AI assistant for The Dawson. " \
+        "I can help you with things related to The Dawson on Morgan, " \
+        "like answering questions and providing information about the property and its operation. " \
+        "Though my answers my be useful, they are **not** authoritative. " \
+        "How can I help you?"
     ASSISTANT_ROLE = 'assistant'
     USER_ROLE = 'user'
     character_name = models.CharField(max_length=256, default=DEFAULT_CHARACTER_NAME)
