@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 
 import os
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "morgan_proj.settings")
+
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE", "morgan_proj.settings")
 
 application = get_wsgi_application()
