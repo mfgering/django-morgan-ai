@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>About Morgan</h2>
+<p><b>Dawson Information:</b> Morgan uses a set of files that are specific to The Dawson:
+    <ul>
+        <li><a href="{% static 'files/dawson_bylaws-split.txt' %}" target="_blank">Bylaws</a></li>
+        <li><a href="{% static 'files/dawson_covenants-2005-split.txt' %}" target="_blank">Covenants</a></li>
+        <li><a href="{% static 'files/dawson_maintenance.txt' %}" target="_blank">Maintenance Responsibilities</a></li>
+        <li><a href="{% static 'files/dawson_rules.txt' %}" target="_blank">Rules and Regulations</a></li>
+        <li><a href="{% static 'files/unit_assignments.txt' %}" target="_blank">Parking, storage bin, and personal locker assignments</a></li>
+        <li><a href="{% static 'files/unit_interest.txt' %}" target="_blank">Unit size, common element percentages</a></li>
+        <li><a href="{% static 'files/dawson_faqs.txt' %}" target="_blank">Miscellaneous facts, e.g. about who manages The Dawson</a></li>
+    </ul>
+    
+</p>
+<p>Morgan will resist answering questions beyond the scope of The Dawson.</p>
+<p>Morgan uses <a href="{% static 'files/prompt1.txt' %}" target="_blank">these instructions</a> to guide it.</p>
+<p><b>All Messages in a Chat:</b> Morgan considers all the messages in a chat when it generates a response.
+    This means that it will remember your name, if you tell it in a previous message.
+    It also means you can ask for more or less detail without 
+    having to repeat the question, e.g. "Less detail, please."
+</p>
+<p><b>Natural Language</b>Morgan understands natural language very well. It knows, e.g., these are asking
+    the same question:
+    <ul>
+        <li>What is the size of unit 412?</li>
+        <li>How big is unit 412?</li>
+    </ul>
+</p>
+<p><b>Implementation:</b> The smarts for Morgan are provided by OpenAI, using
+their Assistant API and files uploaded to the assistant. This enables OpenAI to
+run general tasks, but to use the files as additional sources of data.</p> 
+{% endblock  %}
+

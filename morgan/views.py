@@ -208,3 +208,7 @@ def chat_favs(request):
     favs = ChatFavorite.objects.order_by('-rank')
     response = render(request, 'chat-favs.html', locals())
     return response
+
+def about_morgan(request):
+    response = render(request, 'about.html', locals())
+    return response
