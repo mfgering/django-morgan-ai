@@ -63,13 +63,6 @@ class Chat(Run):
     greeting = models.TextField(default=DEFAULT_GREETING)
     msgs = models.CharField(max_length=30000, default=DEFAULT_CHARACTER_NAME)
 
-class Message(models.Model):
-    openai_id = models.CharField(max_length=256, null=True)
-    role = models.CharField(max_length=30)
-    content = models.TextField()
-    thread_ref = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True, related_name='messages')
-    created_at = models.DateTimeField(null=True)
-
 class ChatFavorite(models.Model):
     rank = models.DecimalField(max_digits=5, decimal_places=2, default=-1)
     flagged = models.BooleanField(default=False)
