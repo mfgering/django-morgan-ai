@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from urllib.parse import unquote
+import random
 
 SESSION_CHAT_ID = 'chat_id'
 
@@ -47,7 +48,8 @@ def chat_check_status(request):
             if openai_data['status'] == 'queued':
                 result['msg'] = 'Waiting...'
             if openai_data['status'] == 'in_progress':
-                result['msg'] = 'Working...'
+                msg = random.choice(['Working...', 'Thinking...', 'Hmmm...', 'Still working...'])
+                result['msg'] = msg
             if openai_data['status'] == 'completed':
                 result['msg'] = 'Done'
                 endpoint = f"https://api.openai.com/v1/threads/{thread_id}/messages"
