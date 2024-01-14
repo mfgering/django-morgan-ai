@@ -3,7 +3,7 @@ from .models import Chat, Thread, ChatFavorite
 import decimal
 
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'openai_id', 'created_at', 'thread', 'status')
+    list_display = ('id', 'openai_id', 'created_at', 'status')
 
 class ThreadAdmin(admin.ModelAdmin):
     list_display = ('id', 'openai_id', 'created_at')

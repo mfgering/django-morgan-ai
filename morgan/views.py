@@ -34,7 +34,9 @@ def chat_check_status(request):
     if current_chat_id is not None:
         try:
             chat = Chat.objects.get(pk=current_chat_id)
-            thread_id = chat.thread.openai_id
+            thrd_qs = Thread.objects.filter(run=chat.id)
+            thread_id = thrd_qs[0].openai_id
+            #thread_id = chat.thread.openai_id
             run_id = chat.openai_id
             endpoint = f"https://api.openai.com/v1/threads/{thread_id}/runs/{run_id}"
             r = requests.get(endpoint, headers=get_openai_headers())
@@ -81,12 +83,12 @@ def chat(request):
             chat.save()
             current_chat_id = chat.id
             request.session[SESSION_CHAT_ID] = current_chat_id
-        thrd = chat.thread
-        if thrd is None:
-            thrd = Thread()
+        thrd_qs =  Thread.objects.filter(run=chat.id)
+        if thrd_qs.count() == 0:
+            thrd = Thread(run=chat)
             thrd.save()
-            chat.thread = thrd
-            chat.save()
+        else:
+            thrd = thrd_qs[0]
         if thrd.openai_id is None:
             # Need to create openai thread
             endpoint = 'https://api.openai.com/v1/threads'
@@ -121,12 +123,14 @@ def chat(request):
             msg_content = request.POST['user_msg'].strip()
             if len(msg_content) > 0:
                 # Add message to thread
-                thrd = chat.thread
-                if thrd is None:
-                    thrd = Thread()
+                thrd_qs = Thread.objects.filter(run=chat.id)
+                if thrd_qs.count() == 0:
+                    thrd = Thread(run = chat)
                     thrd.save()
                     chat.thread = thrd
                     chat.save()
+                else:
+                    thrd = thrd_qs[0]
                 if thrd.openai_id is None:
                     # Need to create openai thread
                     endpoint = 'https://api.openai.com/v1/threads'

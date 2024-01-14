@@ -26,27 +26,11 @@ class Assistant(models.Model):
     def _str_(self):
         return self.name
 
-class Thread(models.Model):
-    openai_id = models.CharField(max_length=256, null=True)
-    created_at = models.DateTimeField(null=True)
-
-    def get_thread_data(self):
-        endpoint = f"https://api.openai.com/v1/threads/{self.openai_id}"
-        r = requests.get(endpoint, headers=get_openai_headers())
-        openai_data = json.loads(r.text)
-        return openai_data
-
-    def get_messages(self):
-        endpoint = f"https://api.openai.com/v1/threads/{self.openai_id}/messages"
-        r = requests.get(endpoint, headers=get_openai_headers())
-        openai_data = json.loads(r.text)
-        return openai_data
-
 class Run(models.Model):
     openai_id = models.CharField(max_length=256, null=True)
     assistant = models.ForeignKey(Assistant, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(null=True)
-    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True)
+    #thread = models.OneToOneField(Thread, on_delete=models.CASCADE, null=True, blank=True)
     status = models.CharField(max_length=256, null=True)
 
 class Chat(Run):
@@ -62,6 +46,22 @@ class Chat(Run):
     character_name = models.CharField(max_length=256, default=DEFAULT_CHARACTER_NAME)
     greeting = models.TextField(default=DEFAULT_GREETING)
     msgs = models.CharField(max_length=30000, default=DEFAULT_CHARACTER_NAME)
+
+class Thread(models.Model):
+    openai_id = models.CharField(max_length=256, null=True)
+    created_at = models.DateTimeField(null=True)
+    run = models.ForeignKey(Run, on_delete=models.CASCADE, null=True, related_name='thread')
+    def get_thread_data(self):
+        endpoint = f"https://api.openai.com/v1/threads/{self.openai_id}"
+        r = requests.get(endpoint, headers=get_openai_headers())
+        openai_data = json.loads(r.text)
+        return openai_data
+
+    def get_messages(self):
+        endpoint = f"https://api.openai.com/v1/threads/{self.openai_id}/messages"
+        r = requests.get(endpoint, headers=get_openai_headers())
+        openai_data = json.loads(r.text)
+        return openai_data
 
 class ChatFavorite(models.Model):
     rank = models.DecimalField(max_digits=5, decimal_places=2, default=-1)
