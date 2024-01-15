@@ -30,6 +30,7 @@ urlpatterns = [
     re_path(r'^chat-show/$', morgan_views.chat_show, name='chat_show'),
     re_path(r'^chat-show/(?P<chat_id>[0-9]+)/$', morgan_views.chat_show, name='chat_show'),
     path('chat-check-status/', morgan_views.chat_check_status, name='chat_check_status'),
+    path('chat-flag-submit/', morgan_views.chat_flag_submit, name='chat_flag_submit'),
     path('chat-show-action/', morgan_views.chat_show_action, name='chat_show_action'),
     path('chat-favs/', morgan_views.chat_favs, name='chat_favs'),
     path('about/', morgan_views.about_morgan, name='about_morgan'),

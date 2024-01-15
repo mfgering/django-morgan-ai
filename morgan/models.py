@@ -69,3 +69,14 @@ class ChatFavorite(models.Model):
     remarks = models.TextField(null=True, blank=True)
     user_msg = models.TextField(null=True)
     assist_msg = models.TextField(null=True)
+
+class ChatFlag(models.Model):
+    FLAG_CHOICES = (
+        ('new', 'New'),
+        ('fixed', 'Fixed'),
+        ('rejected', 'Rejected')
+    )
+    status = models.CharField(max_length=20, choices=FLAG_CHOICES)
+    user_txt = models.TextField()
+    asst_txt = models.TextField()
+    flag_txt = models.TextField()

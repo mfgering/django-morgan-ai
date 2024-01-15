@@ -18,21 +18,46 @@
 <div class="container-fluid">
     {% for msg in msgs %}
         {% if msg.role == 'user' %}
-            <div class="card text-dark rounded-3 mb-2" style="margin-left: 2rem">
+            <div id="msg-{{ forloop.counter }}" class="card text-dark rounded-3 mb-2" style="margin-left: 2rem">
                 <div class="card-body msg-card-body">
                     <p class="card-title user-card-label">You</p>
                     <p class="card-text">{{ msg.content|markdownify }}</p>
                 </div>
             </div>
         {% else %}
-            <div class="card text-dark bg-light rounded-3 mb-2" style="margin-right: 2rem">
+            <div id="msg-{{ forloop.counter }}" class="card text-dark bg-light rounded-3 mb-2" style="margin-right: 2rem">
                 <div class="card-body" style='padding-top: 0;'>
-                    <p class="card-title  assistant-card-label">{{ chat.character_name }}</p>
+                    <div class="container card-title assistant-card-label" style="overflow: hidden;">
+                        <div class="float-left">{{ chat.character_name }}</div>
+                        <div class="float-right">
+                            <button id="flag-{{ forloop.counter }}" class="btn" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="flag_popup({{forloop.counter }});return false;" name="chat_action" value="flag-{{ forloop.counter }}">&#128681</button>
+                        </div>
+                    </div>
                     <p class="card-text">{{ msg.content|markdownify }}</p>
                 </div>
             </div>
         {% endif %}
     {% endfor %}
+    <div id="flag-modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h5>Flag This Response</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>                
+            </div>
+            <div class="modal-body">
+                <p>In a few words, say why this answer is wrong or how it could be improved.</p>
+                <textarea id="flag_msg" name="flag_msg" class="form-control" id="flag_msg_textarea" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Submit" onclick="flag_submit();">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>    
     {% if chat.status == None or chat.status == 'completed' %}
         <p class="card-title user-card-label">You:</p>
         <div class="mb-3">

@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from .models import Chat, ChatFavorite, Assistant, Thread
+from .models import Chat, ChatFavorite, Assistant, Thread, ChatFlag
 from django.http import HttpResponse, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -24,6 +25,20 @@ def get_openai_headers():
       'Authorization': f"Bearer {settings.OPENAI_API_KEY}"
     }
     return headers
+
+@csrf_exempt
+def chat_flag_submit(request):
+    result = {
+        'status': None,
+    }
+    request_data = json.loads(request.body)
+    user_txt = request_data['user_txt']
+    asst_txt = request_data['asst_txt']
+    flag_txt = request_data['flag_txt']
+    flag = ChatFlag(user_txt=user_txt, asst_txt= asst_txt, flag_txt=flag_txt, status="new")
+    flag.save()
+    data = json.dumps(result)
+    return HttpResponse(data, content_type='application/json')
 
 def chat_check_status(request):
     result = {

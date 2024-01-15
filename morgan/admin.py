@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Chat, Thread, ChatFavorite
+from .models import Chat, Thread, ChatFavorite, ChatFlag
 import decimal
 
 class ChatAdmin(admin.ModelAdmin):
@@ -28,9 +28,12 @@ class ChatFavoriteAdmin(admin.ModelAdmin):
                 fav.save()
         return num_favs
 
+class ChatFlagAdmin(admin.ModelAdmin):
+    list_display = ('id', 'status', 'user_txt', 'asst_txt', 'flag_txt')
 
 # Register your models here.
 
 admin.site.register(Chat, ChatAdmin)
 admin.site.register(Thread, ThreadAdmin)
 admin.site.register(ChatFavorite, ChatFavoriteAdmin)
+admin.site.register(ChatFlag, ChatFlagAdmin)

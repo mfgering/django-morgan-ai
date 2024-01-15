@@ -3,6 +3,7 @@
     font-weight: bold;
     color: var(--body-quiet-color);
     padding-top: 0;
+    padding-left: 0;
 }
 
 .msg-card-body {
