@@ -37,6 +37,7 @@ def chat_flag_submit(request):
     flag_txt = request_data['flag_txt']
     flag = ChatFlag(user_txt=user_txt, asst_txt= asst_txt, flag_txt=flag_txt, status="new")
     flag.save()
+    result['status'] = 'saved'
     data = json.dumps(result)
     return HttpResponse(data, content_type='application/json')
 
