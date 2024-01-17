@@ -83,6 +83,8 @@ def test_view(request):
     #messages.info(request, "Three credits remain in your account.")
     #foo = ChatFavorite.normalize_rank()
     has_permission = True
+    import sys
+    syspath = ", ".join(sys.path)
     response = render(request, 'test.html', locals())
     return response
 
