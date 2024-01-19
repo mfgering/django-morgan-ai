@@ -14,22 +14,27 @@
         <li><a href="{% static 'files/dawson_faqs.txt' %}" target="_blank">Miscellaneous facts, e.g. about who manages The Dawson</a></li>
         <li><a href="{% static 'files/nc-47f-statutes.txt' %}" target="_blank">NC Chapter 47F Statutes</a></li>
     </ul>
-    
 </p>
 <p>Morgan will resist answering questions beyond the scope of The Dawson.</p>
 <p>Morgan uses <a href="{% static 'files/prompt1.txt' %}" target="_blank">these instructions</a> to guide it.</p>
-<p><b>All Messages in a Chat:</b> Morgan considers all the messages in a chat when it generates a response.
+<p><b>Chat History:</b> Morgan considers all the messages in a chat when it generates a response.
     This means that it will remember your name, if you tell it in a previous message.
     It also means you can ask for more or less detail without 
     having to repeat the question, e.g. "Less detail, please."
+    Use the "New Chat" button to erase your chat history and start a fresh one.
 </p>
-<p><b>Natural Language</b>Morgan understands natural language very well. It knows, e.g., these are asking
+<p><b>Natural Language:</b> Morgan understands natural language very well. It knows, e.g., these are asking
     the same question:
     <ul>
         <li>What is the size of unit 412?</li>
         <li>How big is unit 412?</li>
     </ul>
 </p>
+<p><b>Chat Flagging:</b> Each Morgan response has a "flag" (🚩). If Morgan's response is wrong
+or can be improved, press the flag to enter your remarks.</p>
+<p><b>Correctness:</b> As it is based on a large language model, Morgan is susceptible to generating
+    hallucinations, i.e. plausible but non-factual information.</p>
+<p><b>Feedback:</b> You can email feedback to <a href="mailto:morgan@mfg.ferree-gering.com">morgan@mfg.ferree-gering.com</a></p>
 <p><b>Implementation:</b> The smarts for Morgan are provided by OpenAI, using
 their Assistant API and files uploaded to the assistant. This enables OpenAI to
 run general tasks, but to use the files as additional sources of data.</p> 
