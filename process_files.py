@@ -74,13 +74,13 @@ def split_dawson_legal(src: list[str], title=None)->list[str]:
     return segs
 
 def split_bylaws():
-    with open('files/src/dawson_bylaws.txt', 'r') as f:
+    with open('./dawson_bylaws.txt', 'r') as f:
         lines = f.readlines()
         split = split_dawson_legal(lines, "BYLAWS")
     return split
 
 def split_covenants():
-    with open('files/src/dawson_covenants-2005.txt', 'r') as f:
+    with open('./dawson_covenants-2005.txt', 'r') as f:
         lines = f.readlines()
         split = split_dawson_legal(lines, "COVENANTS")
     return split
@@ -91,12 +91,12 @@ def test_splitter():
 
 dotenv.load_dotenv()
 covenants_split = split_covenants()
-with open('files/dawson_covenants-2005-split.txt', 'w') as f:
+with open('../dawson_covenants-2005-split.txt', 'w') as f:
     for s in covenants_split:
         f.write(s)
         f.write('\n')
 bylaws_split = split_bylaws()
-with open('files/dawson_bylaws-split.txt', 'w') as f:
+with open('../dawson_bylaws-split.txt', 'w') as f:
     for s in bylaws_split:
         f.write(s)
         f.write('\n')
