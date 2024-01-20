@@ -207,12 +207,14 @@ def chat_show_action(request):
     post = request.POST
     if 'favorites' in post['chat_action']:
         for p in post.keys():
-            if p.startswith('msg-chk-'):
-                user_msg_idx = int(p[8:])
+            if p.startswith('msg-fav-chk-') or p.startswith('msg-faq-chk-'):
+                user_msg_idx = int(p[12:])
                 usr_msg = unquote(post[f'msg_str_{user_msg_idx}'])
                 assist_msg_idx = user_msg_idx + 1
                 assist_msg = unquote(post[f'msg_str_{assist_msg_idx}'])
                 fav = ChatFavorite(user_msg=usr_msg, assist_msg=assist_msg)
+                fav.faq = True if p.startswith('msg-faq-chk-') else False
+                fav.fav = True if p.startswith('msg-fav-chk-') else False
                 fav.save()
         resp = HttpResponseRedirect(f'/chat-show/{post["chat_id"]}')
         return resp
@@ -230,7 +232,14 @@ def chat_show_action(request):
     return resp
 
 def chat_favs(request):
-    favs = ChatFavorite.objects.order_by('-rank')
+    favs = ChatFavorite.objects.filter(fav=True).order_by('-rank')
+    page_title = 'Favorites'
+    response = render(request, 'chat-favs.html', locals())
+    return response
+
+def chat_faqs(request):
+    favs = ChatFavorite.objects.filter(faq=True).order_by('-rank')
+    page_title = 'FAQs'
     response = render(request, 'chat-favs.html', locals())
     return response
 

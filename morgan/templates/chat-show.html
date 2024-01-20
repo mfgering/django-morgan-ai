@@ -36,9 +36,14 @@
                     <div class="card-body">
                         <h5 class="card-title">You</h5>
                         <div class="form-check">
-                            <input class="form-check-input" name="msg-chk-{{msg.idx}}" type="checkbox" value="1" id="msg-chk-{{msg.idx}}">
-                            <label class="form-check-label" for="msg-chk-{{msg.idx}}">
+                            <input class="form-check-input" name="msg-fav-chk-{{msg.idx}}" type="checkbox" value="1" id="msg-fav-chk-{{msg.idx}}">
+                            <label class="form-check-label" for="msg-fav-chk-{{msg.idx}}">
                             Favorite
+                            </label>
+                            <br/>
+                            <input class="form-check-input" name="msg-faq-chk-{{msg.idx}}" type="checkbox" value="1" id="msg-faq-chk-{{msg.idx}}">
+                            <label class="form-check-label" for="msg-faq-chk-{{msg.idx}}">
+                            FAQ
                             </label>
                         </div>                    
                         <p class="card-text" id="chat-msg-{{msg.idx}}">{{ msg.content|markdownify }}</p>
@@ -54,7 +59,7 @@
             {% endif %}
         {% endfor %}
         <div class="container-fluid mb-3">
-            <button type="submit" name="chat_action" value="favorites" class="btn btn-warning">Save Favorites</button>
+            <button type="submit" name="chat_action" value="favorites" class="btn btn-warning">Save Favorites & FAQs</button>
             <button type="submit" name="chat_action" value="delete_chat" class="btn btn-warning">Delete Chat</button>
         </div>
     </form>

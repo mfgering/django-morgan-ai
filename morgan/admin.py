@@ -12,7 +12,7 @@ class ThreadAdmin(admin.ModelAdmin):
     list_display = ('id', 'openai_id', 'created_at')
 
 class ChatFavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'flagged', 'rank', 'user_msg', 'assist_msg')
+    list_display = ('id', 'flagged', 'faq', 'fav', 'rank', 'user_msg', 'assist_msg')
     actions = ["normalize_rank"]
     @admin.action(description="Normalize the rank values")
 

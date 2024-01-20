@@ -66,6 +66,8 @@ class Thread(models.Model):
 class ChatFavorite(models.Model):
     rank = models.DecimalField(max_digits=5, decimal_places=2, default=-1)
     flagged = models.BooleanField(default=False)
+    fav = models.BooleanField(default=False)
+    faq = models.BooleanField(default=False)
     remarks = models.TextField(null=True, blank=True)
     user_msg = models.TextField(null=True)
     assist_msg = models.TextField(null=True)

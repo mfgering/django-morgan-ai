@@ -33,6 +33,7 @@ urlpatterns = [
     path('chat-flag-submit/', morgan_views.chat_flag_submit, name='chat_flag_submit'),
     path('chat-show-action/', morgan_views.chat_show_action, name='chat_show_action'),
     path('chat-favs/', morgan_views.chat_favs, name='chat_favs'),
+    path('chat-faqs/', morgan_views.chat_faqs, name='chat_faqs'),
     path('about/', morgan_views.about_morgan, name='about_morgan'),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
