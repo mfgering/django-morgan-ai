@@ -16,11 +16,11 @@ def get_openai_headers():
 
 class Assistant(models.Model):
     ASSISTANT_ID = 'asst_G0tCzhuvOi8cqtUnUwMCKXhx'
-    openai_id = models.CharField(max_length=256, null=True)
-    created_at = models.DateTimeField(null=True)
-    name = models.CharField(max_length=256, null=True)
-    description = models.CharField(max_length=512, null=True)
-    model = models.CharField(max_length=512, null=True)
+    openai_id = models.CharField(max_length=256, null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=256, null=True, blank=True)
+    description = models.CharField(max_length=512, null=True, blank=True)
+    model = models.CharField(max_length=512, null=True, blank=True)
     # Note: Other OpenAI fields are not modeled here
 
     def _str_(self):

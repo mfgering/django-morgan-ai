@@ -14,6 +14,7 @@ from urllib.parse import unquote
 import random
 
 SESSION_CHAT_ID = 'chat_id'
+ASSISTANT_ID = 'assistant_id'
 
 def cleanup_openai_text(text):
     return re.sub(r'【.*?】', '', text)
@@ -132,6 +133,10 @@ def chat(request):
             request.session[SESSION_CHAT_ID] = None
         elif request.POST['chat_action'] == 'submit':
             chat = None
+            assistant_id = request.session.get(ASSISTANT_ID)
+            if assistant_id is None:
+                assistant_id = Assistant.ASSISTANT_ID
+                request.session[ASSISTANT_ID] = assistant_id
             current_chat_id = request.session.get(SESSION_CHAT_ID)
             assert(current_chat_id is not None)
             try:
@@ -164,7 +169,7 @@ def chat(request):
                 data = {'role': Chat.USER_ROLE, 'content': msg_content}
                 r = requests.post(endpoint, headers=get_openai_headers(), data=json.dumps(data))
                 endpoint = f'https://api.openai.com/v1/threads/{thrd.openai_id}/runs'
-                data = {'assistant_id': Assistant.ASSISTANT_ID}
+                data = {'assistant_id': assistant_id}
                 r = requests.post(endpoint, headers=get_openai_headers(), data=json.dumps(data))                
                 if r.status_code == 200:
                     data = json.loads(r.text)
@@ -245,4 +250,16 @@ def chat_faqs(request):
 
 def about_morgan(request):
     response = render(request, 'about.html', locals())
+    return response
+
+def choose_assistant(request):
+    if request.method == 'GET':
+        assistants = Assistant.objects.all()
+        assistant_id = request.session.get(ASSISTANT_ID)
+        response = render(request, 'choose-assistant.html', locals())
+    elif request.method == 'POST':
+        id = request.POST['asst']
+        assistant = Assistant.objects.get(id=id)
+        request.session[ASSISTANT_ID] = assistant.openai_id
+        response = HttpResponseRedirect('/chat')
     return response

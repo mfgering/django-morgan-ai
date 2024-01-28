@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Chat, Thread, ChatFavorite, ChatFlag
+from .models import Assistant, Chat, Thread, ChatFavorite, ChatFlag
 import decimal
 
 class ChatAdmin(admin.ModelAdmin):
@@ -31,8 +31,11 @@ class ChatFavoriteAdmin(admin.ModelAdmin):
 class ChatFlagAdmin(admin.ModelAdmin):
     list_display = ('id', 'status', 'user_txt', 'asst_txt', 'flag_txt')
 
+class AssistantAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description', 'openai_id')
 # Register your models here.
 
+admin.site.register(Assistant, AssistantAdmin)
 admin.site.register(Chat, ChatAdmin)
 admin.site.register(Thread, ThreadAdmin)
 admin.site.register(ChatFavorite, ChatFavoriteAdmin)

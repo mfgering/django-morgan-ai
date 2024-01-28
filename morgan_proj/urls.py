@@ -35,5 +35,6 @@ urlpatterns = [
     path('chat-favs/', morgan_views.chat_favs, name='chat_favs'),
     path('chat-faqs/', morgan_views.chat_faqs, name='chat_faqs'),
     path('about/', morgan_views.about_morgan, name='about_morgan'),
+    path('choose-assistant/', morgan_views.choose_assistant, name='choose_assistant'),
     path("__debug__/", include("debug_toolbar.urls")),
 ]
