@@ -26,7 +26,7 @@
             </td>
             <td>{{ item.name }}</td>
             <td>{{ item.description }}</td>
-            <td>{{ item.openai_id }}</td>
+            <td><a href="https://platform.openai.com/playground?assistant={{ item.openai_id }}&mode=assistant&thread=thread_0ehScvVbsDgh0mIHOBQvCY5o" target="_blank">{{ item.openai_id }}</a></td>
         </tr>
          {% endfor %}
         </tbody>            
