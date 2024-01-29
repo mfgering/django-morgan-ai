@@ -85,6 +85,8 @@ def test_view(request):
     #foo = ChatFavorite.normalize_rank()
     has_permission = True
     import sys
+    id = 'asst_4KUzH77OqQKGJKzBc3tsr4uv'
+    assistant = update_assistant(id)
     syspath = ", ".join(sys.path)
     response = render(request, 'test.html', locals())
     return response
@@ -263,3 +265,24 @@ def choose_assistant(request):
         request.session[ASSISTANT_ID] = assistant.openai_id
         response = HttpResponseRedirect('/chat')
     return response
+
+def update_assistant(assistant_openai_id):
+    assistants = Assistant.objects.filter(openai_id = assistant_openai_id)
+    if len(assistants) != 1:
+        pass #TODO FIX THIS
+        return
+    assistant = assistants[0]
+    endpoint =f"https://api.openai.com/v1/assistants/{assistant.openai_id}"
+    r = requests.get(endpoint, headers=get_openai_headers())
+    if r.status_code == 200:
+        openai_data = json.loads(r.text)
+        assistant.name = openai_data['name']
+        assistant.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
+        assistant.model = openai_data['model']
+        assistant.instructions = openai_data['instructions']
+        assistant.save()
+    #thrd.openai_id = openai_data['id']
+    #thrd.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
+    #thrd.save()
+
+    print("Seems good")

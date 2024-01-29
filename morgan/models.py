@@ -21,6 +21,7 @@ class Assistant(models.Model):
     name = models.CharField(max_length=256, null=True, blank=True)
     description = models.CharField(max_length=512, null=True, blank=True)
     model = models.CharField(max_length=512, null=True, blank=True)
+    instructions = models.TextField(null=True, blank=True)
     # Note: Other OpenAI fields are not modeled here
 
     def _str_(self):
