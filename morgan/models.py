@@ -15,14 +15,13 @@ def get_openai_headers():
 # Create your models here.
 
 class Assistant(models.Model):
-    ASSISTANT_ID = 'asst_4KUzH77OqQKGJKzBc3tsr4uv'
+    DEFAULT_ASSISTANT_ID = 'asst_4KUzH77OqQKGJKzBc3tsr4uv'
     openai_id = models.CharField(max_length=256, null=True, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=256, null=True, blank=True)
     description = models.CharField(max_length=512, null=True, blank=True)
     model = models.CharField(max_length=512, null=True, blank=True)
     instructions = models.TextField(null=True, blank=True)
-    # Note: Other OpenAI fields are not modeled here
 
     def _str_(self):
         return self.name

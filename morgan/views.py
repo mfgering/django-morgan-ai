@@ -137,7 +137,7 @@ def chat(request):
             chat = None
             assistant_id = request.session.get(ASSISTANT_ID)
             if assistant_id is None:
-                assistant_id = Assistant.ASSISTANT_ID
+                assistant_id = Assistant.DEFAULT_ASSISTANT_ID
                 request.session[ASSISTANT_ID] = assistant_id
             current_chat_id = request.session.get(SESSION_CHAT_ID)
             assert(current_chat_id is not None)
@@ -250,7 +250,20 @@ def chat_faqs(request):
     response = render(request, 'chat-favs.html', locals())
     return response
 
+def current_assistant(request):
+    assistant_id = request.session.get(ASSISTANT_ID)
+    if assistant_id is None:
+        assistants = Assistant.objects.filter(openai_id__isnull=False)
+    else:
+        assistants = Assistant.objects.filter(openai_id=assistant_id)
+    if len(assistants) >= 1:
+        assistant_id = assistants[0].openai_id
+        request.session[ASSISTANT_ID] = assistant_id
+        return assistants[0]
+    return None
+
 def about_morgan(request):
+    assistant = current_assistant(request)
     response = render(request, 'about.html', locals())
     return response
 
@@ -268,9 +281,7 @@ def choose_assistant(request):
 
 def update_assistant(assistant_openai_id):
     assistants = Assistant.objects.filter(openai_id = assistant_openai_id)
-    if len(assistants) != 1:
-        pass #TODO FIX THIS
-        return
+    assert len(assistants) == 1
     assistant = assistants[0]
     endpoint =f"https://api.openai.com/v1/assistants/{assistant.openai_id}"
     r = requests.get(endpoint, headers=get_openai_headers())
@@ -281,8 +292,3 @@ def update_assistant(assistant_openai_id):
         assistant.model = openai_data['model']
         assistant.instructions = openai_data['instructions']
         assistant.save()
-    #thrd.openai_id = openai_data['id']
-    #thrd.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
-    #thrd.save()
-
-    print("Seems good")
