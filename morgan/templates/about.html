@@ -17,7 +17,9 @@
     </ul>
 </p>
 <p>Morgan will resist answering questions beyond the scope of The Dawson.</p>
-<p>Morgan uses <a href="{% static 'files/prompt1.txt' %}" target="_blank">these instructions</a> to guide it.</p>
+<p>Morgan uses <a class="btn btn-primary" data-toggle="collapse" href="#ai-instructions" role="button" aria-expanded="false">these instructions</a>
+<textarea id="ai-instructions" class="collapsible hidden collapse" rows=10 cols=40>{{assistant.instructions}}</textarea>
+to guide it.</p>
 <p><b>Chat History:</b> Morgan considers all the messages in a chat when it generates a response.
     This means that it will remember your name, if you tell it in a previous message.
     It also means you can ask for more or less detail without 
