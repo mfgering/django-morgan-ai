@@ -12,6 +12,7 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from urllib.parse import unquote
 import random
+import pytz
 
 SESSION_CHAT_ID = 'chat_id'
 ASSISTANT_ID = 'assistant_id'
@@ -119,7 +120,7 @@ def chat(request):
             if r.status_code == 200:
                 openai_data = json.loads(r.text)
                 thrd.openai_id = openai_data['id']
-                thrd.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
+                thrd.created_at = datetime.utcfromtimestamp(openai_data['created_at']).replace(tzinfo=pytz.utc)
                 thrd.save()
         msgs_thread = thrd.get_messages()
         m = msgs_thread['data']
@@ -165,7 +166,7 @@ def chat(request):
                     if r.status_code == 200:
                         openai_data = json.loads(r.text)
                         thrd.openai_id = openai_data['id']
-                        thrd.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
+                        thrd.created_at = datetime.utcfromtimestamp(openai_data['created_at']).replace(tzinfo=pytz.utc)
                         thrd.save()
                 endpoint = f'https://api.openai.com/v1/threads/{thrd.openai_id}/messages'
                 data = {'role': Chat.USER_ROLE, 'content': msg_content}
@@ -288,7 +289,7 @@ def update_assistant(assistant_openai_id):
     if r.status_code == 200:
         openai_data = json.loads(r.text)
         assistant.name = openai_data['name']
-        assistant.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
+        assistant.created_at = datetime.utcfromtimestamp(openai_data['created_at']).replace(tzinfo=pytz.utc)
         assistant.model = openai_data['model']
         assistant.instructions = openai_data['instructions']
         assistant.save()
