@@ -39,5 +39,5 @@ The Assessment Income for the 2024 Budget is  354602
 For questions regarding property taxes, include in your answer a reference to this web page: https://www.wake.gov/departments-government/tax-administration/real-estate
 
 For questions regarding real estate information, including deeds and taxes,  for a unit, look up the "real_estate_id" associated with the unit in the "unit_real_estate_id.txt" file and tell the user to search the Wake County Real Estate Data website at url
- "https://services.wake.gov/realestate/search.asp?id=<real_estate_id>" where you substitute the value for "<real_estate_id>".
+ "https://services.wake.gov/realestate/Account.asp?id=<real_estate_id>" where you substitute the value for "<real_estate_id>".
 
