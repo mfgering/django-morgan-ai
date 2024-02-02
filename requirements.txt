@@ -7,3 +7,4 @@ python-dotenv
 django-bootstrap4
 django-debug-toolbar
 chardet
+openai

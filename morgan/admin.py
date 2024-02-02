@@ -5,14 +5,7 @@ import requests
 from django.conf import settings
 import json
 from datetime import datetime
-
-def get_openai_headers():
-    headers = {
-      "Content-Type": "application/json",
-      'OpenAI-Beta': "assistants=v1",
-      'Authorization': f"Bearer {settings.OPENAI_API_KEY}"
-    }
-    return headers
+import openai
 
 class ChatAdmin(admin.ModelAdmin):
     list_display = ('id', 'openai_id', 'created_at', 'status')
@@ -48,16 +41,15 @@ class AssistantAdmin(admin.ModelAdmin):
     actions = ["assistant_update_openai"]
 
     def assistant_update_openai(self, request, queryset):
+        client = openai.OpenAI()
         for assistant in queryset:
-            endpoint =f"https://api.openai.com/v1/assistants/{assistant.openai_id}"
-            r = requests.get(endpoint, headers=get_openai_headers())
-            if r.status_code == 200:
-                openai_data = json.loads(r.text)
-                assistant.name = openai_data['name']
-                assistant.created_at = datetime.utcfromtimestamp(openai_data['created_at'])
-                assistant.model = openai_data['model']
-                assistant.instructions = openai_data['instructions']
-                assistant.save()
+            openai_assistant = openai.beta.assistants.retrieve(assistant.openai_id)
+            assistant.name = openai_assistant.name
+            assistant.description = openai_assistant.description
+            assistant.created_at = datetime.utcfromtimestamp(openai_assistant.created_at)
+            assistant.model = openai_assistant.model
+            assistant.instructions = openai_assistant.instructions
+            assistant.save()
 
 # Register your models here.
 
