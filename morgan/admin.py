@@ -9,6 +9,13 @@ import openai
 
 class ChatAdmin(admin.ModelAdmin):
     list_display = ('id', 'openai_id', 'created_at', 'status')
+    actions = ["collect_garbage"]
+    @admin.action(description="Collect garbage")
+
+    def collect_garbage(self, request, queryset):
+        for chat in queryset:
+            if len(chat.msgs) < 5:
+                chat.delete()
 
 class ThreadAdmin(admin.ModelAdmin):
     list_display = ('id', 'openai_id', 'created_at')
