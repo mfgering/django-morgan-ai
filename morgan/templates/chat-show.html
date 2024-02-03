@@ -11,12 +11,12 @@
             {% if chat.id == chat_id_int %}
                 <li class="nav-item">
                     <a class="nav-link active" href='/chat-show/{{ chat.id }}'>
-                        <span class="d-inline-block text-truncate" style="font-weight: bold; max-width: 20rem;">{{ chat.title }}
+                        <span class="d-inline-block text-truncate" style="font-weight: bold; max-width: 90%;">{{ chat.title }}
                         </span></a> </li>
             {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href='/chat-show/{{ chat.id }}'>
-                        <span class="d-inline-block text-truncate" style="max-width: 20rem;">{{ chat.title }}
+                        <span class="d-inline-block text-truncate" style="max-width: 90%;">{{ chat.title }}
                         </span></a> </li>
                         {% endif %}
         {% endfor %}
