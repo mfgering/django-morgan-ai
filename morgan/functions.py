@@ -38,15 +38,33 @@ class UnitInfo(object):
         return header, map
 
     def _unit2prop(self, unit, prop):
+        u_val = str(unit).strip()
         # Look for prop in the headers
         hdr_map = [(self._assignments_header, self._assignments),
                    (self._interest_header, self._interest),
                    (self._real_estate_id_header, self._real_estate_id)]
         for hdr, tbl in hdr_map:
             if prop in hdr:
-                val = tbl[str(unit)][hdr.index(prop)-1]
+                val = tbl[u_val][hdr.index(prop)-1]
                 return val
         return None
+    
+    def is_valid_unit(self, unit):
+        u_val = str(unit).strip()
+        for m in [self._assignments, self._interest, self._real_estate_id]:
+            if u_val in m.keys():
+                return True
+        return False
+
+    def real_estate_id_2_unit(self, real_estate_id):
+        clean = str(real_estate_id).strip()
+        key = next((k for k, v in self._real_estate_id.items() if v[0] == clean), None)
+        return key
+
+    def get_props(self):
+        props = self._assignments_header[1:]+self._interest_header[1:]+self._real_estate_id_header[1:]
+        return props
+
     
 def get_unit_info(unit, prop):
     unit_info = UnitInfo()
@@ -54,12 +72,16 @@ def get_unit_info(unit, prop):
     return val
 
 def get_deed_info(real_estate_id):
+    # Check that the real_estate_id is valid
+    unit_info = UnitInfo()
     result = {}
-    apt = Apt(real_estate_id, '000')
-    result['owner'] = str(apt.owner)
-    result['deed_date'] = str(apt.deed_date)
-    result['pkg_sale_price'] = str(apt.pkg_sale_price)
-    result['assessed'] = str(apt.assessed)
+    unit = unit_info.real_estate_id_2_unit(real_estate_id)
+    if unit is not None:
+        apt = Apt(real_estate_id, '000')
+        result['owner'] = str(apt.owner)
+        result['deed_date'] = str(apt.deed_date)
+        result['pkg_sale_price'] = str(apt.pkg_sale_price)
+        result['assessed'] = str(apt.assessed)
     return result
 
 tool_get_deed_info_defn = """
@@ -121,7 +143,9 @@ tool_get_deed_info_defn = """
 
 if __name__ == "__main__":
     unit_info = UnitInfo()
-    props = unit_info._assignments_header[1:]+unit_info._interest_header[1:]+unit_info._real_estate_id_header[1:]
+    unit = unit_info.real_estate_id_2_unit('0328656')
+    is_valid = unit_info.is_valid_unit(117)
+    props = unit_info.get_props()
     q = [f'"{prop}"' for prop in props]
 
     props_str = ",\n".join(q)
