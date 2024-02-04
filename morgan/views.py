@@ -14,20 +14,13 @@ from urllib.parse import unquote
 import random
 import pytz
 import openai
+from .functions import get_deed_info
 
 SESSION_CHAT_ID = 'chat_id'
 ASSISTANT_ID = 'assistant_id'
 
 def cleanup_openai_text(text):
     return re.sub(r'【.*?】', '', text)
-
-def get_openai_headers():
-    headers = {
-      "Content-Type": "application/json",
-      'OpenAI-Beta': "assistants=v1",
-      'Authorization': f"Bearer {settings.OPENAI_API_KEY}"
-    }
-    return headers
 
 @csrf_exempt
 def chat_flag_submit(request):
@@ -72,6 +65,24 @@ def chat_check_status(request):
                 openai_messages = client.beta.threads.messages.list(thread_id=thread_id)
                 msg0 = openai_messages.data[0]              
                 assert(msg0.content[0].type == 'text')
+            elif openai_run.status == 'requires_action':
+                x = openai_run.required_action.submit_tool_outputs.tool_calls[0]
+                for tc in openai_run.required_action.submit_tool_outputs.tool_calls:
+                    fname = tc.function.name
+                    args = json.loads(tc.function.arguments)
+                    if fname == 'get_deed_info':
+                        info = get_deed_info(args['real_estate_id'])
+                        run = client.beta.threads.runs.submit_tool_outputs(
+                            thread_id=thread_id,
+                            run_id=run_id,
+                            tool_outputs=[
+                                {
+                                    "tool_call_id": tc.id,
+                                    "output": json.dumps(info),
+                                }
+                            ])
+                        print(info)
+                pass
         except openai.APIError as exc:
             result['msg'] = str(exc)
             result['status'] = 'completed'
@@ -87,7 +98,12 @@ def test_view(request):
     has_permission = True
     import sys
     id = 'asst_4KUzH77OqQKGJKzBc3tsr4uv'
+    client = openai.OpenAI()
+    x = client.beta.assistants.retrieve(id)
+    y = x.model_dump_json()
+    print(y)
     syspath = ", ".join(sys.path)
+
     response = render(request, 'test.html', locals())
     return response
 

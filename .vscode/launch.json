@@ -13,6 +13,14 @@
             "justMyCode": true
         },
         {
+            "name": "Python: get info",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/morgan/functions.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
