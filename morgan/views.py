@@ -14,7 +14,7 @@ from urllib.parse import unquote
 import random
 import pytz
 import openai
-from .functions import get_deed_info
+import morgan.functions
 
 SESSION_CHAT_ID = 'chat_id'
 ASSISTANT_ID = 'assistant_id'
@@ -71,7 +71,18 @@ def chat_check_status(request):
                     fname = tc.function.name
                     args = json.loads(tc.function.arguments)
                     if fname == 'get_deed_info':
-                        info = get_deed_info(args['real_estate_id'])
+                        info = morgan.functions.get_deed_info(args['real_estate_id'])
+                        run = client.beta.threads.runs.submit_tool_outputs(
+                            thread_id=thread_id,
+                            run_id=run_id,
+                            tool_outputs=[
+                                {
+                                    "tool_call_id": tc.id,
+                                    "output": json.dumps(info),
+                                }
+                            ])
+                    if fname == 'get_unit_info':
+                        info = morgan.functions.get_unit_info(args['unit'], args['prop'])
                         run = client.beta.threads.runs.submit_tool_outputs(
                             thread_id=thread_id,
                             run_id=run_id,

@@ -1,13 +1,61 @@
 import openai
 try:
-    from dawson_deeds import *
+    from morgan.dawson_deeds import *
 except Exception:
-    from .dawson_deeds import *
+    try:
+        from dawson_deeds import *
+    except Exception:
+        from .dawson_deeds import *
+from django.contrib.staticfiles.storage import staticfiles_storage
+
+class UnitInfo(object):
+    def __init__(self) -> None:
+        (self._assignments_header, self._assignments) = self._make_map('unit_assignments.txt')
+        (self._interest_header, self._interest) = self._make_map('unit_interest.txt')
+        (self._real_estate_id_header, self._real_estate_id) = self._make_map('unit_real_estate_id.txt')
+
+    def _get_file_contents(self, filename):
+        content = None
+        try:
+            path = staticfiles_storage.path(f'files/{filename}')
+            os.path.isfile(path)
+        except:
+            path = f"./morgan/static/files/{filename}"
+            os.path.isfile(path)
+        with open(path, 'r') as fp:
+            content = fp.readlines()
+        return content
+    
+    def _make_map(self, filename):
+        map = {}
+        content = self._get_file_contents(filename)
+        #header
+        header = content[0].split('|')[1:-1]
+        # units
+        for unit_line  in content[2:]:
+            a = unit_line.split('|')[1:]
+            map[a[0]] = a[1:-1]
+        return header, map
+
+    def _unit2prop(self, unit, prop):
+        # Look for prop in the headers
+        hdr_map = [(self._assignments_header, self._assignments),
+                   (self._interest_header, self._interest),
+                   (self._real_estate_id_header, self._real_estate_id)]
+        for hdr, tbl in hdr_map:
+            if prop in hdr:
+                val = tbl[str(unit)][hdr.index(prop)-1]
+                return val
+        return None
+    
+def get_unit_info(unit, prop):
+    unit_info = UnitInfo()
+    val = unit_info._unit2prop(unit, prop)
+    return val
 
 def get_deed_info(real_estate_id):
     result = {}
     apt = Apt(real_estate_id, '000')
-    print(apt)
     result['owner'] = str(apt.owner)
     result['deed_date'] = str(apt.deed_date)
     result['pkg_sale_price'] = str(apt.pkg_sale_price)
@@ -34,7 +82,53 @@ tool_get_deed_info_defn = """
 }
 """
 
+tool_get_deed_info_defn = """
+{
+    "name": "get_unit_info",
+    "description": "Get information for a unit",
+    "parameters":
+    {
+        "type": "object",
+        "properties":
+        {
+            "unit":
+            {
+                "type": "string",
+                "description": "Unit identifier"
+            },
+           "prop":
+            {
+                "type": "string",
+                "enum": [
+                    "Parking Space",
+                    "Storage Locker",
+                    "Personal Lock Box",
+                    "unit type",
+                    "approximate square footage",
+                    "residential percent interest",
+                    "commercial percent interest",
+                    "total percent interest",
+                    "real_estate_id"
+                ],
+                "description": "Unit property to look up"
+            }
+             
+        },
+        "required": ["unit", "prop"]
+    }
+}
+"""
+
 if __name__ == "__main__":
+    unit_info = UnitInfo()
+    props = unit_info._assignments_header[1:]+unit_info._interest_header[1:]+unit_info._real_estate_id_header[1:]
+    q = [f'"{prop}"' for prop in props]
+
+    props_str = ",\n".join(q)
+    print(props_str)
+    unit = 410
+    info = get_unit_info(unit)
+    v = info._unit2prop(412, 'Parking Space')
     acct_id = '0329082'
     info = get_deed_info(acct_id)
     print(info)
