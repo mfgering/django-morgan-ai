@@ -116,6 +116,8 @@ def chat_check_status(request):
                                     "output": json.dumps(info),
                                 }
                             ])
+                    else:
+                        print(f"Function {fname} unknown")
                 pass
         except openai.APIError as exc:
             result['msg'] = str(exc)
