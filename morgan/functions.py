@@ -38,24 +38,37 @@ class UnitInfo(object):
         return header, map
 
     def _unit2prop(self, unit, prop):
-        u_val = str(unit).strip()
-        # Look for prop in the headers
-        hdr_map = [(self._assignments_header, self._assignments),
-                   (self._interest_header, self._interest),
-                   (self._real_estate_id_header, self._real_estate_id)]
-        for hdr, tbl in hdr_map:
-            if prop in hdr:
-                val = tbl[u_val][hdr.index(prop)-1]
-                return val
+        try:
+            u_val = self._clean_unit(unit)
+            # Look for prop in the headers
+            hdr_map = [(self._assignments_header, self._assignments),
+                    (self._interest_header, self._interest),
+                    (self._real_estate_id_header, self._real_estate_id)]
+            for hdr, tbl in hdr_map:
+                if prop in hdr:
+                    val = tbl[u_val][hdr.index(prop)-1]
+                    return val
+        except:
+            return None
         return None
     
+    def _clean_unit(self, unit):
+        v = str(unit).strip()
+        if v.startswith('#'):
+            v = v[1:]
+        return v.strip()
+
     def is_valid_unit(self, unit):
-        u_val = str(unit).strip()
+        u_val = self._clean_unit(unit)
         for m in [self._assignments, self._interest, self._real_estate_id]:
             if u_val in m.keys():
                 return True
         return False
-
+    
+    def get_units(self):
+        all_units = ', '.join(self._interest.keys())
+        return all_units
+    
     def real_estate_id_2_unit(self, real_estate_id):
         clean = str(real_estate_id).strip()
         key = next((k for k, v in self._real_estate_id.items() if v[0] == clean), None)
@@ -71,8 +84,17 @@ def get_unit_info(unit, prop):
     val = unit_info._unit2prop(unit, prop)
     return val
 
+def is_valid_unit(unit):
+    unit_info = UnitInfo()
+    is_valid = unit_info.is_valid_unit(unit)
+    return is_valid
+
+def get_all_units():
+    unit_info = UnitInfo()
+    units = unit_info.get_units()
+    return units
+
 def get_deed_info(real_estate_id):
-    # Check that the real_estate_id is valid
     unit_info = UnitInfo()
     result = {}
     unit = unit_info.real_estate_id_2_unit(real_estate_id)
@@ -84,22 +106,32 @@ def get_deed_info(real_estate_id):
         result['assessed'] = str(apt.assessed)
     return result
 
-tool_get_deed_info_defn = """
+tool_is_valid_unit = """
 {
-    "name": "get_deed_info",
-    "description": "Get deed information from Wake County",
+    "name": "is_valid_unit",
+    "description": "check whether a unit is valid",
     "parameters":
     {
         "type": "object",
         "properties":
         {
-            "real_estate_id":
+            "unit":
             {
                 "type": "string",
-                "description": "Real estate id from Wake County"
+                "description": "Unit number"
             }
         },
-        "required": ["real_estate_id"]
+        "required": ["unit"]
+    }
+}
+"""
+
+tool_get_all_units = """
+{
+    "name": "get_all_units",
+    "description": "Return all units",
+    "parameters":
+    {
     }
 }
 """
@@ -143,6 +175,7 @@ tool_get_deed_info_defn = """
 
 if __name__ == "__main__":
     unit_info = UnitInfo()
+    all_units = unit_info.get_units()
     unit = unit_info.real_estate_id_2_unit('0328656')
     is_valid = unit_info.is_valid_unit(117)
     props = unit_info.get_props()
