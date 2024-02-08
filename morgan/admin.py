@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib import messages
 from .models import Assistant, Chat, Thread, ChatFavorite, ChatFlag
 import decimal
 import requests
@@ -26,8 +27,8 @@ class ThreadAdmin(admin.ModelAdmin):
 class ChatFavoriteAdmin(admin.ModelAdmin):
     list_display = ('id', 'flagged', 'faq', 'fav', 'rank', 'user_msg', 'assist_msg')
     actions = ["normalize_rank"]
-    @admin.action(description="Normalize the rank values")
 
+    @admin.action(description="Normalize the rank values")
     def normalize_rank(self, request, queryset):
         favs = queryset.order_by("rank")
         num_favs = favs.count()
@@ -50,13 +51,17 @@ class AssistantAdmin(admin.ModelAdmin):
     def assistant_update_openai(self, request, queryset):
         client = openai.OpenAI()
         for assistant in queryset:
-            openai_assistant = openai.beta.assistants.retrieve(assistant.openai_id)
-            assistant.name = openai_assistant.name
-            assistant.description = openai_assistant.description
-            assistant.created_at = datetime.utcfromtimestamp(openai_assistant.created_at)
-            assistant.model = openai_assistant.model
-            assistant.instructions = openai_assistant.instructions
-            assistant.save()
+            try:
+                openai_assistant = openai.beta.assistants.retrieve(assistant.openai_id)
+                assistant.name = openai_assistant.name
+                assistant.description = openai_assistant.description
+                assistant.created_at = datetime.utcfromtimestamp(openai_assistant.created_at)
+                assistant.model = openai_assistant.model
+                assistant.instructions = openai_assistant.instructions
+                assistant.save()
+            except Exception as exc:
+                messages.add_message(request=request, level=messages.ERROR, 
+                                     message=f"Error with assistant {assistant.name}: {exc}")
 
 # Register your models here.
 
