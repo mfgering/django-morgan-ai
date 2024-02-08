@@ -81,7 +81,7 @@ def chat_check_status(request):
                                     "output": json.dumps(info),
                                 }
                             ])
-                    if fname == 'get_unit_info':
+                    elif fname == 'get_unit_info':
                         info = morgan.functions.get_unit_info(args['unit'], args['prop'])
                         run = client.beta.threads.runs.submit_tool_outputs(
                             thread_id=thread_id,
@@ -93,6 +93,29 @@ def chat_check_status(request):
                                 }
                             ])
                         print(info)
+                    elif fname == 'is_valid_unit':
+                        info = morgan.functions.is_valid_unit(args['unit'])
+                        run = client.beta.threads.runs.submit_tool_outputs(
+                            thread_id=thread_id,
+                            run_id=run_id,
+                            tool_outputs=[
+                                {
+                                    "tool_call_id": tc.id,
+                                    "output": json.dumps(info),
+                                }
+                            ])
+                        print(info)
+                    elif fname == 'get_all_units':
+                        info = morgan.functions.get_all_units()
+                        run = client.beta.threads.runs.submit_tool_outputs(
+                            thread_id=thread_id,
+                            run_id=run_id,
+                            tool_outputs=[
+                                {
+                                    "tool_call_id": tc.id,
+                                    "output": json.dumps(info),
+                                }
+                            ])
                 pass
         except openai.APIError as exc:
             result['msg'] = str(exc)
