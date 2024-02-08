@@ -190,7 +190,7 @@ def chat(request):
         elif request.POST['chat_action'] == 'submit':
             chat = None
             assistant_id = request.session.get(ASSISTANT_ID)
-            if assistant_id is None:
+            if assistant_id is None or not request.user.is_staff: # always make anonymous users use the *current* default assistant
                 assistant_id = Assistant.DEFAULT_ASSISTANT_ID
                 request.session[ASSISTANT_ID] = assistant_id
             current_chat_id = request.session.get(SESSION_CHAT_ID)
