@@ -16,7 +16,7 @@ def get_openai_headers():
 # Create your models here.
 
 class Assistant(models.Model):
-    DEFAULT_ASSISTANT_ID = 'asst_4KUzH77OqQKGJKzBc3tsr4uv'
+    DEFAULT_ASSISTANT_ID = 'asst_kp2dWNYmf3R6z8YBfNMCJrSt'
     openai_id = models.CharField(max_length=256, null=True, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=256, null=True, blank=True)
