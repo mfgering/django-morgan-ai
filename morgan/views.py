@@ -220,7 +220,10 @@ def chat(request):
                     thrd.created_at = datetime.utcfromtimestamp(openai_thread.created_at).replace(tzinfo=pytz.utc)
                     thrd.save()
                 openai_message = client.beta.threads.messages.create(thrd.openai_id, role=Chat.USER_ROLE, content=msg_content)
-                openai_run = client.beta.threads.runs.create(thread_id=thrd.openai_id, assistant_id=assistant_id)
+                assistant = Assistant.objects.get(openai_id = assistant_id)
+                instr_1 = f"Today is {datetime.now().strftime('%A, %B %d, %Y')}.\n"
+                new_instructions = assistant.instructions + instr_1
+                openai_run = client.beta.threads.runs.create(thread_id=thrd.openai_id, assistant_id=assistant_id, instructions=new_instructions)
                 run_id = openai_run.id
                 chat.openai_id = run_id
                 chat.status = openai_run.status
