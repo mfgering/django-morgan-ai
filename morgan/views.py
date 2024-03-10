@@ -67,6 +67,8 @@ def chat_check_status(request):
                 msg0 = openai_messages.data[0]              
                 assert(msg0.content[0].type == 'text')
             elif openai_run.status == 'requires_action':
+                msg = random.choice(['Using special tools...', 'Looking something up...', 'Still working...', 'Almost...'])
+                result['msg'] = msg
                 # Note: Multiple tools may be needed; collect the results and submit them
                 for tc in openai_run.required_action.submit_tool_outputs.tool_calls:
                     fname = tc.function.name
@@ -102,6 +104,8 @@ def chat_check_status(request):
                     run_id=run_id,
                     tool_outputs=tool_outputs)
             elif openai_run.status == 'submit_tool_outputs':
+                msg = random.choice(['Done with special tools...'])
+                result['msg'] = msg
                 run = client.beta.threads.runs.submit_tool_outputs(
                     thread_id=thread_id,
                     run_id=run_id,
