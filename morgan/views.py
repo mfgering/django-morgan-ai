@@ -46,6 +46,7 @@ def chat_check_status(request):
     current_chat_id = request.session.get(SESSION_CHAT_ID)
     if current_chat_id is not None:
         try:
+            tool_outputs = []
             chat = Chat.objects.get(pk=current_chat_id)
             thrd_qs = Thread.objects.filter(run=chat.id)
             thread_id = thrd_qs[0].openai_id
@@ -66,59 +67,45 @@ def chat_check_status(request):
                 msg0 = openai_messages.data[0]              
                 assert(msg0.content[0].type == 'text')
             elif openai_run.status == 'requires_action':
-                x = openai_run.required_action.submit_tool_outputs.tool_calls[0]
+                # Note: Multiple tools may be needed; collect the results and submit them
                 for tc in openai_run.required_action.submit_tool_outputs.tool_calls:
                     fname = tc.function.name
                     args = json.loads(tc.function.arguments)
                     if fname == 'get_deed_info':
                         info = morgan.functions.get_deed_info(args['real_estate_id'])
-                        run = client.beta.threads.runs.submit_tool_outputs(
-                            thread_id=thread_id,
-                            run_id=run_id,
-                            tool_outputs=[
-                                {
+                        tool_outputs.append({
                                     "tool_call_id": tc.id,
                                     "output": json.dumps(info),
-                                }
-                            ])
+                                })
                     elif fname == 'get_unit_info':
                         info = morgan.functions.get_unit_info(args['unit'], args['prop'])
-                        run = client.beta.threads.runs.submit_tool_outputs(
-                            thread_id=thread_id,
-                            run_id=run_id,
-                            tool_outputs=[
-                                {
+                        tool_outputs.append({
                                     "tool_call_id": tc.id,
                                     "output": json.dumps(info),
-                                }
-                            ])
-                        print(info)
+                                })
                     elif fname == 'is_valid_unit':
                         info = morgan.functions.is_valid_unit(args['unit'])
-                        run = client.beta.threads.runs.submit_tool_outputs(
-                            thread_id=thread_id,
-                            run_id=run_id,
-                            tool_outputs=[
-                                {
+                        tool_outputs.append({
                                     "tool_call_id": tc.id,
                                     "output": json.dumps(info),
-                                }
-                            ])
-                        print(info)
+                                })
                     elif fname == 'get_all_units':
                         info = morgan.functions.get_all_units()
-                        run = client.beta.threads.runs.submit_tool_outputs(
-                            thread_id=thread_id,
-                            run_id=run_id,
-                            tool_outputs=[
-                                {
+                        tool_outputs.append({
                                     "tool_call_id": tc.id,
                                     "output": json.dumps(info),
-                                }
-                            ])
+                                })
                     else:
                         print(f"Function {fname} unknown")
-                pass
+                run = client.beta.threads.runs.submit_tool_outputs(
+                    thread_id=thread_id,
+                    run_id=run_id,
+                    tool_outputs=tool_outputs)
+            elif openai_run.status == 'submit_tool_outputs':
+                run = client.beta.threads.runs.submit_tool_outputs(
+                    thread_id=thread_id,
+                    run_id=run_id,
+                    tool_outputs=tool_outputs)
         except openai.APIError as exc:
             result['msg'] = str(exc)
             result['status'] = 'completed'
