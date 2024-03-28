@@ -5,6 +5,7 @@ import morgan_proj.settings
 from dataclasses import dataclass
 import asyncio
 from datetime import datetime
+import morgan.functions
 
 @dataclass
 class Message(json.JSONEncoder):
@@ -22,6 +23,10 @@ class MorganChat:
         self.messages = []
         self._system_prompt = None
 
+    def _init_tools(self):
+        tools = morgan.functions.all_tool_defs
+        return tools
+    
     def _init_system_messages(self):
         self.messages = []
         file_map = [
@@ -59,8 +64,37 @@ class MorganChat:
             self._init_system_messages()
         #m = self._user(msg)
         self.messages.append(self._user(msg).to_json())
-        self._last_response = await self.client.chat.completions.create(model=self.model_name, messages=self.messages)
-        self._last_message = self._last_response.choices[0].message
+        tools = self._init_tools()
+        response = await self.client.chat.completions.create(model=self.model_name, messages=self.messages, tools=tools)
+        tool_calls = response.tool_calls
+        if tool_calls:
+            pass
+            available_functions = {
+                "get_unit_info": morgan.functions.get_unit_info,
+            }  # only one function in this example, but you can have multiple
+            self.messages.append(response.choices[0].message)  # extend conversation with assistant's reply
+            # Step 4: send the info for each function call and function response to the model
+            for tool_call in tool_calls:
+                function_name = tool_call.function.name
+                function_to_call = available_functions[function_name]
+                function_args = json.loads(tool_call.function.arguments)
+                function_response = function_to_call(
+                    prop=function_args.get("prop"),
+                    unit=function_args.get("unit"),
+                )
+                self.messages.append(
+                    {
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                    }
+                )  # extend conversation with function response
+            response = await self._client.chat.completions.create(
+                model=self.model_name, messages=self.messages)  # get a new response from the model where it can see the function response
+
+        self._last_response = response
+        self._last_message = response.choices[0].message
         content = self._last_message.content
         m = Message(self._last_message.role, content, 'assistant')
         print(f"{content} ({self._last_response.usage.total_tokens} total tokens)")

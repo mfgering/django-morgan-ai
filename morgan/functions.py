@@ -106,8 +106,7 @@ def get_deed_info(real_estate_id):
         result['assessed'] = str(apt.assessed)
     return result
 
-tool_is_valid_unit = """
-{
+tool_is_valid_unit = {
     "name": "is_valid_unit",
     "description": "check whether a unit is valid",
     "parameters":
@@ -124,20 +123,16 @@ tool_is_valid_unit = """
         "required": ["unit"]
     }
 }
-"""
 
-tool_get_all_units = """
-{
+tool_get_all_units_defn = {
     "name": "get_all_units",
     "description": "Return all units",
     "parameters":
     {
     }
 }
-"""
 
-tool_get_deed_info_defn = """
-{
+tool_get_deed_info_defn = {
     "name": "get_unit_info",
     "description": "Get information for a unit",
     "parameters":
@@ -171,7 +166,12 @@ tool_get_deed_info_defn = """
         "required": ["unit", "prop"]
     }
 }
-"""
+
+all_tool_defs = [
+    tool_is_valid_unit,
+    tool_get_all_units_defn,
+    tool_get_deed_info_defn
+]
 
 if __name__ == "__main__":
     unit_info = UnitInfo()
