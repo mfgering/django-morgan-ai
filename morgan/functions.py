@@ -1,3 +1,4 @@
+import json
 import openai
 try:
     from morgan.dawson_deeds import *
@@ -106,72 +107,95 @@ def get_deed_info(real_estate_id):
         result['assessed'] = str(apt.assessed)
     return result
 
-tool_is_valid_unit = {
-    "name": "is_valid_unit",
-    "description": "check whether a unit is valid",
-    "parameters":
-    {
-        "type": "object",
-        "properties":
+tool_is_valid_unit_defn = {
+    "type": "function",
+    "function": {
+        "name": "is_valid_unit",
+        "description": "check whether a unit is valid",
+        "parameters":
         {
-            "unit":
+            "type": "object",
+            "properties":
             {
-                "type": "string",
-                "description": "Unit number"
-            }
-        },
-        "required": ["unit"]
+                "unit":
+                {
+                    "type": "string",
+                    "description": "Unit number"
+                }
+            },
+            "required": ["unit"]
+        }
     }
 }
 
 tool_get_all_units_defn = {
-    "name": "get_all_units",
-    "description": "Return all units",
-    "parameters":
-    {
+    "type": "function",
+    "function": {
+        "name": "get_all_units",
+        "description": "Return all units",
+        "parameters":
+        {
+        }
     }
 }
 
 tool_get_deed_info_defn = {
-    "name": "get_unit_info",
-    "description": "Get information for a unit",
-    "parameters":
-    {
-        "type": "object",
-        "properties":
+    "type": "function",
+    "function": {
+        "name": "get_unit_info",
+        "description": "Get information for a unit",
+        "parameters":
         {
-            "unit":
+            "type": "object",
+            "properties":
             {
-                "type": "string",
-                "description": "Unit identifier"
+                "unit":
+                {
+                    "type": "string",
+                    "description": "Unit identifier"
+                },
+            "prop":
+                {
+                    "type": "string",
+                    "enum": [
+                        "Parking Space",
+                        "Storage Locker",
+                        "Personal Lock Box",
+                        "unit type",
+                        "approximate square footage",
+                        "residential percent interest",
+                        "commercial percent interest",
+                        "total percent interest",
+                        "real_estate_id"
+                    ],
+                    "description": "Unit property to look up"
+                }
+                
             },
-           "prop":
-            {
-                "type": "string",
-                "enum": [
-                    "Parking Space",
-                    "Storage Locker",
-                    "Personal Lock Box",
-                    "unit type",
-                    "approximate square footage",
-                    "residential percent interest",
-                    "commercial percent interest",
-                    "total percent interest",
-                    "real_estate_id"
-                ],
-                "description": "Unit property to look up"
-            }
-             
-        },
-        "required": ["unit", "prop"]
+            "required": ["unit", "prop"]
+        }
     }
 }
 
 all_tool_defs = [
-    tool_is_valid_unit,
+    tool_is_valid_unit_defn,
     tool_get_all_units_defn,
     tool_get_deed_info_defn
 ]
+
+def call_tool(tool_call):
+    result = None
+    function_name = tool_call.function.name
+    function_args = json.loads(tool_call.function.arguments)
+    function_to_call = globals()[function_name]
+    function_response = function_to_call(**function_args)
+    result = {
+            "tool_call_id": tool_call.id,
+            "role": "tool",
+            "name": function_name,
+            "content": function_response,
+        }
+    return result
 
 if __name__ == "__main__":
     unit_info = UnitInfo()

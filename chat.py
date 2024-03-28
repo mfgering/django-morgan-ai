@@ -45,11 +45,13 @@ class MorganChat:
                         'values. for questions about the Bylaws and identify the Article and '
                         'Section where possible.'
                         'Identify the Article, Section, and Clause for for references to Bylaws.', 'morgan/static/files/dawson_bylaws-split.txt'], 
+
             ['rules', 'These are the Rules and Regulations in markdown format. Rules and Regulations '
                         'define how responsibilities are shared between the HOA and the HOMEOWNER. '
                         'Each rule has a number. For example, rule number 30 begins '
                         '"**30. WINDOW/DOOR SCREENS**" Include the rule number when referring this '
                         'content.', 'morgan/static/files/dawson_rules.txt'],
+
             ['maintenance', 'Maintenance Responsibilities:', 'morgan/static/files/dawson_rules.txt'],
         ]
         for name, intro, fn in file_map:
@@ -66,31 +68,15 @@ class MorganChat:
         self.messages.append(self._user(msg).to_json())
         tools = self._init_tools()
         response = await self.client.chat.completions.create(model=self.model_name, messages=self.messages, tools=tools)
-        tool_calls = response.tool_calls
+        tool_calls = response.choices[0].message.tool_calls
         if tool_calls:
             pass
-            available_functions = {
-                "get_unit_info": morgan.functions.get_unit_info,
-            }  # only one function in this example, but you can have multiple
             self.messages.append(response.choices[0].message)  # extend conversation with assistant's reply
             # Step 4: send the info for each function call and function response to the model
             for tool_call in tool_calls:
-                function_name = tool_call.function.name
-                function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call.function.arguments)
-                function_response = function_to_call(
-                    prop=function_args.get("prop"),
-                    unit=function_args.get("unit"),
-                )
-                self.messages.append(
-                    {
-                        "tool_call_id": tool_call.id,
-                        "role": "tool",
-                        "name": function_name,
-                        "content": function_response,
-                    }
-                )  # extend conversation with function response
-            response = await self._client.chat.completions.create(
+                fn_resp_msg = morgan.functions.call_tool(tool_call)
+                self.messages.append(fn_resp_msg)
+            response = await self.client.chat.completions.create(
                 model=self.model_name, messages=self.messages)  # get a new response from the model where it can see the function response
 
         self._last_response = response
@@ -105,5 +91,5 @@ class MorganChat:
     
 chat = MorganChat()
 
-asyncio.run(chat.say('What rules are there about cats?'))
+asyncio.run(chat.say('What parking is assigned to unit 412?'))
 
