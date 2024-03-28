@@ -70,7 +70,9 @@ class MorganChat:
         response = await self.client.chat.completions.create(model=self.model_name, messages=self.messages, tools=tools)
         tool_calls = response.choices[0].message.tool_calls
         if tool_calls:
-            pass
+            m = response.choices[0].message
+            if not m.content:
+                m.content = ''
             self.messages.append(response.choices[0].message)  # extend conversation with assistant's reply
             # Step 4: send the info for each function call and function response to the model
             for tool_call in tool_calls:
@@ -91,5 +93,5 @@ class MorganChat:
     
 chat = MorganChat()
 
-asyncio.run(chat.say('What parking is assigned to unit 412?'))
+asyncio.run(chat.say('How large is unit 412 and is unit number 600 valid?'))
 

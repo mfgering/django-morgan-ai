@@ -88,7 +88,7 @@ def get_unit_info(unit, prop):
 def is_valid_unit(unit):
     unit_info = UnitInfo()
     is_valid = unit_info.is_valid_unit(unit)
-    return is_valid
+    return str(is_valid)
 
 def get_all_units():
     unit_info = UnitInfo()
