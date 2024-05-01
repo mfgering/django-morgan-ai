@@ -59,33 +59,36 @@ class MorganChat:
                 txt = f.read()
             m = Message('system', f'{intro}\n{txt}', name)
             self.messages.append(m.to_json())
+            break #TODO: REMOVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         
     async def say(self, msg: str):
         if not self.messages:
             self._init_system_messages()
-        #m = self._user(msg)
+            tools = self._init_tools()
         self.messages.append(self._user(msg).to_json())
-        tools = self._init_tools()
-        response = await self.client.chat.completions.create(model=self.model_name, messages=self.messages, tools=tools)
-        tool_calls = response.choices[0].message.tool_calls
-        if tool_calls:
-            m = response.choices[0].message
-            if not m.content:
-                m.content = ''
-            self.messages.append(response.choices[0].message)  # extend conversation with assistant's reply
-            # Step 4: send the info for each function call and function response to the model
-            for tool_call in tool_calls:
-                fn_resp_msg = morgan.functions.call_tool(tool_call)
-                self.messages.append(fn_resp_msg)
-            response = await self.client.chat.completions.create(
-                model=self.model_name, messages=self.messages)  # get a new response from the model where it can see the function response
+        while True:
+            response = await self.client.chat.completions.create(model=self.model_name, messages=self.messages, tools=tools)
+            tool_calls = response.choices[0].message.tool_calls
+            if tool_calls:
+                m = response.choices[0].message
+                if not m.content:
+                    m.content = ''
+                self.messages.append(response.choices[0].message)  # extend conversation with assistant's reply
+                # Send the info for each function call and function response to the model
+                for tool_call in tool_calls:
+                    fn_resp_msg = morgan.functions.call_tool(tool_call)
+                    self.messages.append(fn_resp_msg)
+                response = await self.client.chat.completions.create(
+                    model=self.model_name, messages=self.messages)  # get a new response from the model where it can see the function response
 
-        self._last_response = response
-        self._last_message = response.choices[0].message
-        content = self._last_message.content
-        m = Message(self._last_message.role, content, 'assistant')
-        print(f"{content} ({self._last_response.usage.total_tokens} total tokens)")
+            self._last_response = response
+            self._last_message = response.choices[0].message
+            content = self._last_message.content
+            m = Message(self._last_message.role, content, 'assistant')
+            print(f"{content} ({self._last_response.usage.total_tokens} total tokens)")
+            if self._last_response.choices[0].finish_reason == 'stop':
+                break
     
     def _user(self, msg: str):
         m = Message('user', msg, 'user')
