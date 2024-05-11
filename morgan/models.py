@@ -4,6 +4,7 @@ from django.conf import settings
 import json
 import requests
 import openai
+import datetime
 
 def get_openai_headers():
     headers = {
@@ -44,6 +45,7 @@ class Chat(Run):
         "How can I help you?"
     ASSISTANT_ROLE = 'assistant'
     USER_ROLE = 'user'
+    when_created = models.DateTimeField(auto_now_add=True)
     character_name = models.CharField(max_length=256, default=DEFAULT_CHARACTER_NAME)
     greeting = models.TextField(default=DEFAULT_GREETING)
     msgs = models.CharField(max_length=30000, default=DEFAULT_CHARACTER_NAME)

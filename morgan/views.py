@@ -244,7 +244,7 @@ def chat_show(request, chat_id=None):
                     for m in msg_list:
                         m['idx'] = msg_idx
                         msg_idx += 1
-                chat_list.append({'id': chat.id, 'title': msgs[0]['content']})
+                chat_list.append({'id': chat.id, 'title': msgs[0]['content'], 'when_created': chat.when_created})
         except Exception as exc:
             pass
     response = render(request, 'chat-show.html', locals())
