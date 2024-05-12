@@ -214,11 +214,14 @@ def chat(request):
                 assistant = Assistant.objects.get(openai_id = assistant_id)
                 instr_1 = f"Today is {datetime.now().strftime('%A, %B %d, %Y')}.\n"
                 new_instructions = assistant.instructions + instr_1
-                openai_run = client.beta.threads.runs.create(thread_id=thrd.openai_id, assistant_id=assistant_id, instructions=new_instructions)
-                run_id = openai_run.id
-                chat.openai_id = run_id
-                chat.status = openai_run.status
-                chat.save()
+                try:
+                    openai_run = client.beta.threads.runs.create(thread_id=thrd.openai_id, assistant_id=assistant_id, instructions=new_instructions)
+                    run_id = openai_run.id
+                    chat.openai_id = run_id
+                    chat.status = openai_run.status
+                    chat.save()
+                except Exception as e:
+                    messages.error(request, f"Error {e.message}")
         elif request.POST['chat_action'] == 'cancel':
             pass #TODO: FIX THIS
 
