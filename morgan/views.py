@@ -221,7 +221,7 @@ def chat(request):
                     chat.status = openai_run.status
                     chat.save()
                 except Exception as e:
-                    messages.error(request, f"Error {e.message}")
+                    messages.error(request, e.message)
         elif request.POST['chat_action'] == 'cancel':
             pass #TODO: FIX THIS
 
