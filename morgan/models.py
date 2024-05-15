@@ -6,14 +6,6 @@ import requests
 import openai
 import datetime
 
-def get_openai_headers():
-    headers = {
-      "Content-Type": "application/json",
-      'OpenAI-Beta': "assistants=v1",
-      'Authorization': f"Bearer {settings.OPENAI_API_KEY}"
-    }
-    return headers
-
 # Create your models here.
 
 class Assistant(models.Model):
