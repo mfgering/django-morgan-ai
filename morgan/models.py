@@ -9,7 +9,7 @@ import datetime
 # Create your models here.
 
 class Assistant(models.Model):
-    DEFAULT_ASSISTANT_ID = 'asst_gbLdydtS4ccaBgXNNfLE6bGt'
+    DEFAULT_ASSISTANT_ID = 'asst_ZBSAgTT58tLCDlBgaWfNBX5x'
     openai_id = models.CharField(max_length=256, null=True, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
     name = models.CharField(max_length=256, null=True, blank=True)
